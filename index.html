@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="暖心溝通板" />
+  <meta name="theme-color" content="#F3EAE0" />
+  <title>❤️ 暖心溝通板</title>
+  <link id="appleTouchIcon" rel="apple-touch-icon" href="" />
+  <style>
+    :root {
+      --warm-cream-bg: #FAF6F0;
+      --warm-header-bg: #F3EAE0;
+      --text-primary: #2B2623;
+      --text-secondary: #6B615A;
+      --accent-coral: #D94E4E;
+      --accent-orange: #E07A5F;
+      --accent-teal: #2B7A78;
+      --accent-amber: #C86D2D;
+      --accent-indigo: #4A6FA5;
+      --accent-sage: #4F772D;
+      --accent-plum: #7B4B94;
+      --border-soft: #D6CCC2;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--warm-cream-bg);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      overflow: hidden;
+    }
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .top-header {
+      background-color: var(--warm-header-bg);
+      padding: 12px 16px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .app-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-mute {
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 14px;
+      border: 2px solid #C9BEB3;
+      background: #FFFFFF;
+      color: var(--text-primary);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-mute.muted {
+      color: var(--accent-coral);
+      border-color: var(--accent-coral);
+    }
+
+    .action-bar {
+      background-color: var(--warm-header-bg);
+      padding: 0 14px 12px;
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .btn-handwriting {
+      flex: 1.2;
+      height: 54px;
+      border: none;
+      border-radius: 16px;
+      background-color: var(--accent-orange);
+      color: #FFFFFF;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-add-custom {
+      flex: 1;
+      height: 54px;
+      border: none;
+      border-radius: 14px;
+      background-color: var(--accent-teal);
+      color: #FFFFFF;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .chip-scroll {
+      display: flex;
+      overflow-x: auto;
+      gap: 8px;
+      padding: 10px 12px 6px;
+      flex-shrink: 0;
+      scrollbar-width: none;
+    }
+
+    .chip-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cat-chip {
+      padding: 9px 16px;
+      border-radius: 24px;
+      font-size: 16px;
+      font-weight: 700;
+      white-space: nowrap;
+      border: 1.5px solid var(--border-soft);
+      background: #FFFFFF;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .cat-chip.selected {
+      background: #3D3632;
+      color: #FFFFFF;
+      border-color: #3D3632;
+    }
+
+    .phrases-scroll {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 12px 28px;
+    }
+
+    .section-header {
+      font-size: 20px;
+      font-weight: 800;
+      margin: 14px 0 8px 4px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .phrase-card {
+      min-height: 86px;
+      padding: 14px 10px;
+      border-radius: 16px;
+      border: 2px solid;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.25;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.08s ease;
+    }
+
+    .phrase-card:active {
+      transform: scale(0.97);
+    }
+
+    .empty-custom-card {
+      padding: 16px;
+      border-radius: 16px;
+      border: 2px dashed #C9B2D6;
+      background: #F8F2FB;
+      color: var(--text-secondary);
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+
+    /* 全螢幕特大字卡彈窗 */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: #FFFFFF;
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
+    }
+
+    .overlay.visible {
+      display: flex;
+    }
+
+    .overlay.emergency {
+      background: #FFF5F5;
+    }
+
+    .overlay-badge {
+      align-self: center;
+      padding: 6px 18px;
+      border-radius: 24px;
+      border: 1.5px solid var(--border-soft);
+      background: #FFFFFF;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .overlay-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .overlay-text {
+      font-weight: 900;
+      line-height: 1.2;
+      color: var(--text-primary);
+      word-break: break-word;
+    }
+
+    .overlay-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn-speak-again {
+      height: 62px;
+      border: none;
+      border-radius: 14px;
+      background: var(--accent-teal);
+      color: #FFFFFF;
+      font-size: 22px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-delete-custom {
+      height: 50px;
+      border: 2px solid #C9BEB3;
+      border-radius: 14px;
+      background: #FFFFFF;
+      color: var(--accent-coral);
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      display: none;
+    }
+
+    .btn-close-overlay {
+      height: 66px;
+      border: none;
+      border-radius: 16px;
+      background: #3D3632;
+      color: #FFFFFF;
+      font-size: 24px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* 手寫白板 / 自由輸入頁面 */
+    .hw-modal {
+      position: fixed;
+      inset: 0;
+      background: var(--warm-cream-bg);
+      z-index: 90;
+      display: none;
+      flex-direction: column;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .hw-modal.visible {
+      display: flex;
+    }
+
+    .hw-header {
+      background: var(--warm-header-bg);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .btn-back-home {
+      height: 46px;
+      padding: 0 14px;
+      border-radius: 14px;
+      border: 2px solid #C9BEB3;
+      background: #FFFFFF;
+      color: var(--text-primary);
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .hw-canvas-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 14px 8px;
+      min-height: 0;
+    }
+
+    .hw-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 6px;
+      flex-shrink: 0;
+    }
+
+    .hw-hint {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .hw-tool-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-tool {
+      height: 38px;
+      padding: 0 10px;
+      border-radius: 12px;
+      border: 2px solid #C9BEB3;
+      background: #FFFFFF;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-tool.danger {
+      color: var(--accent-coral);
+    }
+
+    .canvas-wrapper {
+      flex: 1;
+      background: #FFFFFF;
+      border: 2.5px solid var(--border-soft);
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      min-height: 160px;
+    }
+
+    #hwCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+    }
+
+    .hw-type-section {
+      background: var(--warm-header-bg);
+      padding: 10px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .free-input {
+      width: 100%;
+      height: 58px;
+      padding: 0 14px;
+      border-radius: 14px;
+      border: 2px solid #C9BEB3;
+      background: #FFFFFF;
+      color: var(--text-primary);
+      font-size: 21px;
+      font-weight: 700;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .type-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-clear-text {
+      flex: 0.42;
+      height: 52px;
+      border-radius: 14px;
+      border: 2px solid #C9BEB3;
+      background: #FFFFFF;
+      color: var(--text-primary);
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-speak-typed {
+      flex: 1;
+      height: 52px;
+      border: none;
+      border-radius: 14px;
+      background: var(--accent-orange);
+      color: #FFFFFF;
+      font-size: 19px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* 新增常用句對話框 */
+    .dialog-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(43, 38, 35, 0.48);
+      z-index: 120;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .dialog-backdrop.visible {
+      display: flex;
+    }
+
+    .dialog-card {
+      width: 100%;
+      max-width: 420px;
+      background: #FAF6F0;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    }
+
+    .dialog-title {
+      font-size: 21px;
+      font-weight: 800;
+      margin: 0 0 12px;
+    }
+
+    .dialog-input {
+      width: 100%;
+      height: 54px;
+      padding: 0 14px;
+      border-radius: 14px;
+      border: 2px solid #C9BEB3;
+      background: #FFFFFF;
+      font-size: 19px;
+      margin-bottom: 16px;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .dialog-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: calc(28px + env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(43, 38, 35, 0.92);
+      color: #FFFFFF;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 16px;
+      font-weight: 700;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top-header">
+      <h1 class="app-title">❤️ 暖心溝通板</h1>
+      <button id="btnToggleMute" class="btn-mute">🔊 聲音開啟</button>
+    </header>
+
+    <div class="action-bar">
+      <button id="btnOpenHandwriting" class="btn-handwriting">✍️ 手寫 / 自由輸入</button>
+      <button id="btnOpenAddDialog" class="btn-add-custom">➕ 新增常用句</button>
+    </div>
+
+    <nav id="categoryChipContainer" class="chip-scroll"></nav>
+
+    <main id="phraseSectionsContainer" class="phrases-scroll"></main>
+  </div>
+
+  <!-- 全螢幕特大字卡彈出層 -->
+  <div id="fullScreenOverlay" class="overlay">
+    <div id="tvOverlayCategory" class="overlay-badge">緊急醫護</div>
+    <div class="overlay-center">
+      <div id="tvOverlayPhrase" class="overlay-text">請幫我叫護理師</div>
+    </div>
+    <div class="overlay-actions">
+      <button id="btnSpeakAgain" class="btn-speak-again">🔊 再唸一次</button>
+      <button id="btnDeleteCustomOverlay" class="btn-delete-custom">🗑️ 刪除這句自訂常用語</button>
+      <button id="btnCloseOverlay" class="btn-close-overlay">✖ 關閉返回</button>
+    </div>
+  </div>
+
+  <!-- 手寫白板 / 自由輸入視窗 -->
+  <div id="handwritingModal" class="hw-modal">
+    <div class="hw-header">
+      <button id="btnBackHome" class="btn-back-home">← 返回按鍵板</button>
+      <span style="font-size:18px;font-weight:800;">✍️ 手寫白板 / 自由打字</span>
+    </div>
+
+    <div class="hw-canvas-section">
+      <div class="hw-toolbar">
+        <span class="hw-hint">👆 手指直接在白板寫字：</span>
+        <div class="hw-tool-btns">
+          <button id="btnToggleStroke" class="btn-tool">🖊️ 粗筆</button>
+          <button id="btnUndoStroke" class="btn-tool">↩️ 復原</button>
+          <button id="btnClearCanvas" class="btn-tool danger">🧹 清除</button>
+        </div>
+      </div>
+      <div class="canvas-wrapper" id="canvasWrapper">
+        <canvas id="hwCanvas"></canvas>
+      </div>
+    </div>
+
+    <div class="hw-type-section">
+      <div class="hw-hint">⌨️ 或打字讓手機放大顯示並唸出來：</div>
+      <input id="etFreeInput" class="free-input" type="text" placeholder="點這裡輸入想說的話..." />
+      <div class="type-btns">
+        <button id="btnClearText" class="btn-clear-text">清空文字</button>
+        <button id="btnSpeakTypedText" class="btn-speak-typed">📢 放大顯示並唸出來</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增常用句彈窗 -->
+  <div id="addDialogBackdrop" class="dialog-backdrop">
+    <div class="dialog-card">
+      <h2 class="dialog-title">➕ 新增媽媽的常用句</h2>
+      <input id="customPhraseInput" class="dialog-input" type="text" placeholder="例如：幫我拿眼鏡、我想看時間" />
+      <div class="dialog-actions">
+        <button id="btnCancelAdd" class="btn-back-home">取消</button>
+        <button id="btnSaveCustom" class="btn-add-custom" style="flex:none;padding:0 20px;height:46px;">儲存按鍵</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    (function () {
+      // 動態產生 iOS 加入主畫面的暖心圖示
+      try {
+        const iconCanvas = document.createElement('canvas');
+        iconCanvas.width = 180;
+        iconCanvas.height = 180;
+        const ictx = iconCanvas.getContext('2d');
+        ictx.fillStyle = '#E07A5F';
+        ictx.fillRect(0, 0, 180, 180);
+        ictx.fillStyle = '#FAF6F0';
+        ictx.beginPath();
+        ictx.roundRect(30, 42, 120, 82, 18);
+        ictx.fill();
+        ictx.beginPath();
+        ictx.moveTo(64, 124);
+        ictx.lineTo(50, 146);
+        ictx.lineTo(84, 124);
+        ictx.fill();
+        ictx.fillStyle = '#D94E4E';
+        ictx.font = 'bold 54px sans-serif';
+        ictx.textAlign = 'center';
+        ictx.textBaseline = 'middle';
+        ictx.fillText('❤', 90, 85);
+        document.getElementById('appleTouchIcon').href = iconCanvas.toDataURL('image/png');
+      } catch (e) {}
+
+      const STORAGE_CUSTOM = 'warmcare_custom_phrases_v1';
+      const STORAGE_MUTED = 'warmcare_muted_v1';
+
+      const CAT_ALL = '全部';
+      const CAT_EMERGENCY = '🚨 緊急醫護';
+      const CAT_THROAT = '💧 喉嚨與口腔';
+      const CAT_BASIC = '🛏️ 生理與用藥';
+      const CAT_ENV = '🔌 環境與物品';
+      const CAT_REPLY = '💬 常用回覆';
+      const CAT_CUSTOM = '⭐ 我的常用句';
+
+      const CATEGORIES = [CAT_ALL, CAT_EMERGENCY, CAT_THROAT, CAT_BASIC, CAT_ENV, CAT_REPLY, CAT_CUSTOM];
+      const SECTION_CATEGORIES = [CAT_EMERGENCY, CAT_THROAT, CAT_BASIC, CAT_ENV, CAT_REPLY, CAT_CUSTOM];
+
+      const BUILT_IN_PHRASES = [
+        { id: 'e1', text: '請幫我叫護理師', category: CAT_EMERGENCY, isEmergency: true },
+        { id: 'e2', text: '脖子覺得緊緊的／腫脹', category: CAT_EMERGENCY, isEmergency: true },
+        { id: 'e3', text: '呼吸有點喘／吸不到氣', category: CAT_EMERGENCY, isEmergency: true },
+        { id: 'e4', text: '手腳麻麻的／嘴角發麻', category: CAT_EMERGENCY, isEmergency: true },
+        { id: 'e5', text: '傷口很痛／需要止痛', category: CAT_EMERGENCY, isEmergency: false },
+        { id: 'e6', text: '引流管不舒服／拉扯到了', category: CAT_EMERGENCY, isEmergency: false },
+
+        { id: 't1', text: '喉嚨很乾／想喝一點水', category: CAT_THROAT, isEmergency: false },
+        { id: 't2', text: '喉嚨有痰／想清喉嚨', category: CAT_THROAT, isEmergency: false },
+        { id: 't3', text: '想冰敷脖子', category: CAT_THROAT, isEmergency: false },
+        { id: 't4', text: '頭暈／有點噁心想吐', category: CAT_THROAT, isEmergency: false },
+
+        { id: 'b1', text: '我想尿尿', category: CAT_BASIC, isEmergency: false },
+        { id: 'b2', text: '我想大便', category: CAT_BASIC, isEmergency: false },
+        { id: 'b3', text: '肚子餓了／想吃東西', category: CAT_BASIC, isEmergency: false },
+        { id: 'b4', text: '幫我擦臉／擦身體', category: CAT_BASIC, isEmergency: false },
+        { id: 'b5', text: '我想吃安眠藥', category: CAT_BASIC, isEmergency: false },
+
+        { id: 'v1', text: '手機需要充電', category: CAT_ENV, isEmergency: false },
+        { id: 'v2', text: '太冷了／幫我蓋被子', category: CAT_ENV, isEmergency: false },
+        { id: 'v3', text: '太熱了／調低冷氣', category: CAT_ENV, isEmergency: false },
+        { id: 'v4', text: '幫我調高床頭（半坐臥）', category: CAT_ENV, isEmergency: false },
+        { id: 'v5', text: '幫我調低床頭／想躺平', category: CAT_ENV, isEmergency: false },
+        { id: 'v6', text: '我想換個姿勢／翻身', category: CAT_ENV, isEmergency: false },
+        { id: 'v7', text: '我想睡覺／請關燈', category: CAT_ENV, isEmergency: false },
+
+        { id: 'r1', text: '好／可以', category: CAT_REPLY, isEmergency: false },
+        { id: 'r2', text: '不要／不用', category: CAT_REPLY, isEmergency: false },
+        { id: 'r3', text: '好很多了，謝謝', category: CAT_REPLY, isEmergency: false },
+        { id: 'r4', text: '等一下', category: CAT_REPLY, isEmergency: false }
+      ];
+
+      const CATEGORY_COLORS = {
+        [CAT_EMERGENCY]: { accent: '#D94E4E', fill: '#FFF0F0' },
+        [CAT_THROAT]: { accent: '#2B7A78', fill: '#EEF8F7' },
+        [CAT_BASIC]: { accent: '#C86D2D', fill: '#FFF7ED' },
+        [CAT_ENV]: { accent: '#4A6FA5', fill: '#F0F5FC' },
+        [CAT_REPLY]: { accent: '#4F772D', fill: '#F2F8EE' },
+        [CAT_CUSTOM]: { accent: '#7B4B94', fill: '#F8F2FB' }
+      };
+
+      let selectedCategory = CAT_ALL;
+      let activeOverlayItem = null;
+      let audioCtx = null;
+
+      function isMuted() {
+        return localStorage.getItem(STORAGE_MUTED) === 'true';
+      }
+
+      function setMuted(muted) {
+        localStorage.setItem(STORAGE_MUTED, muted ? 'true' : 'false');
+        updateMuteButton();
+      }
+
+      function getCustomPhrases() {
+        try {
+          const raw = localStorage.getItem(STORAGE_CUSTOM);
+          const arr = raw ? JSON.parse(raw) : [];
+          return Array.isArray(arr)
+            ? arr.map(item => ({
+                id: item.id,
+                text: item.text,
+                category: CAT_CUSTOM,
+                isEmergency: false,
+                isCustom: true
+              }))
+            : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function addCustomPhrase(text) {
+        const cleaned = (text || '').trim();
+        if (!cleaned) return;
+        const list = getCustomPhrases();
+        list.unshift({ id: 'c_' + Date.now(), text: cleaned });
+        localStorage.setItem(STORAGE_CUSTOM, JSON.stringify(list.map(x => ({ id: x.id, text: x.text }))));
+      }
+
+      function deleteCustomPhrase(id) {
+        const list = getCustomPhrases().filter(x => x.id !== id);
+        localStorage.setItem(STORAGE_CUSTOM, JSON.stringify(list.map(x => ({ id: x.id, text: x.text }))));
+      }
+
+      function showToast(msg) {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2000);
+      }
+
+      function playWarmDingDong(doubleChime) {
+        try {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) return;
+          if (!audioCtx) audioCtx = new Ctx();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+
+          const freqs = doubleChime ? [659.25, 523.25, 659.25, 523.25] : [659.25, 523.25];
+          const now = audioCtx.currentTime;
+          freqs.forEach((freq, idx) => {
+            const start = now + idx * 0.2;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, start);
+
+            gain.gain.setValueAtTime(0.001, start);
+            gain.gain.linearRampToValueAtTime(0.28, start + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, start + 0.22);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(start);
+            osc.stop(start + 0.23);
+          });
+        } catch (e) {}
+      }
+
+      function speakOnly(text) {
+        if (isMuted() || !('speechSynthesis' in window)) return;
+        try {
+          window.speechSynthesis.cancel();
+          const clean = text.replace(/／/g, '，');
+          const utter = new SpeechSynthesisUtterance(clean);
+          utter.lang = 'zh-TW';
+          utter.rate = 0.92;
+          utter.pitch = 1.02;
+          const voices = window.speechSynthesis.getVoices();
+          const twVoice = voices.find(v => v.lang && (v.lang.includes('zh-TW') || v.lang.includes('zh_TW')));
+          const zhVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('zh'));
+          if (twVoice) utter.voice = twVoice;
+          else if (zhVoice) utter.voice = zhVoice;
+          window.speechSynthesis.speak(utter);
+        } catch (e) {}
+      }
+
+      function announcePhrase(text, doubleChime) {
+        if (isMuted()) return;
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
+        playWarmDingDong(doubleChime);
+        const delayMs = doubleChime ? 760 : 380;
+        setTimeout(() => speakOnly(text), delayMs);
+      }
+
+      function updateMuteButton() {
+        const btn = document.getElementById('btnToggleMute');
+        if (isMuted()) {
+          btn.textContent = '🔇 靜音模式';
+          btn.classList.add('muted');
+        } else {
+          btn.textContent = '🔊 聲音開啟';
+          btn.classList.remove('muted');
+        }
+      }
+
+      function renderChips() {
+        const container = document.getElementById('categoryChipContainer');
+        container.innerHTML = '';
+        CATEGORIES.forEach(cat => {
+          const btn = document.createElement('button');
+          btn.className = 'cat-chip' + (cat === selectedCategory ? ' selected' : '');
+          btn.textContent = cat;
+          btn.onclick = () => {
+            selectedCategory = cat;
+            renderChips();
+            renderPhrases();
+          };
+          container.appendChild(btn);
+        });
+      }
+
+      function renderPhrases() {
+        const container = document.getElementById('phraseSectionsContainer');
+        container.innerHTML = '';
+
+        const allItems = [...getCustomPhrases(), ...BUILT_IN_PHRASES];
+        const targets = selectedCategory === CAT_ALL ? SECTION_CATEGORIES : [selectedCategory];
+
+        targets.forEach(cat => {
+          const items = allItems.filter(x => x.category === cat);
+          const colorInfo = CATEGORY_COLORS[cat] || { accent: '#3D3632', fill: '#FFFFFF' };
+
+          const header = document.createElement('div');
+          header.className = 'section-header';
+          header.style.color = colorInfo.accent;
+          header.textContent = cat;
+          container.appendChild(header);
+
+          if (cat === CAT_CUSTOM && items.length === 0) {
+            const hint = document.createElement('div');
+            hint.className = 'empty-custom-card';
+            hint.textContent = '點上方「➕ 新增常用句」可隨時幫媽媽加入專屬需求（例如：拿眼鏡、找手機）';
+            hint.onclick = openAddDialog;
+            container.appendChild(hint);
+            return;
+          }
+
+          const grid = document.createElement('div');
+          grid.className = 'cards-grid';
+          items.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'phrase-card';
+            card.style.backgroundColor = colorInfo.fill;
+            card.style.borderColor = colorInfo.accent;
+            card.textContent = item.text;
+            card.onclick = () => openFullScreen(item);
+            grid.appendChild(card);
+          });
+          container.appendChild(grid);
+        });
+      }
+
+      function openFullScreen(item) {
+        activeOverlayItem = item;
+        const overlay = document.getElementById('fullScreenOverlay');
+        const badge = document.getElementById('tvOverlayCategory');
+        const textEl = document.getElementById('tvOverlayPhrase');
+        const delBtn = document.getElementById('btnDeleteCustomOverlay');
+
+        const colorInfo = CATEGORY_COLORS[item.category] || { accent: '#3D3632' };
+        badge.textContent = item.category;
+        badge.style.color = colorInfo.accent;
+        textEl.textContent = item.text;
+
+        const len = item.text.length;
+        if (len <= 6) textEl.style.fontSize = '60px';
+        else if (len <= 11) textEl.style.fontSize = '48px';
+        else if (len <= 20) textEl.style.fontSize = '38px';
+        else textEl.style.fontSize = '30px';
+
+        overlay.classList.toggle('emergency', !!item.isEmergency);
+        delBtn.style.display = item.isCustom ? 'block' : 'none';
+        overlay.classList.add('visible');
+
+        announcePhrase(item.text, !!item.isEmergency);
+      }
+
+      // 手寫白板邏輯（支援 iOS 觸控防捲動與螢幕旋轉自適應）
+      const hwModal = document.getElementById('handwritingModal');
+      const canvas = document.getElementById('hwCanvas');
+      const ctx = canvas.getContext('2d');
+      let strokes = [];
+      let currentStroke = null;
+      let isThick = false;
+
+      function resizeCanvas() {
+        const wrapper = document.getElementById('canvasWrapper');
+        const rect = wrapper.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) return;
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        redrawCanvas();
+      }
+
+      function redrawCanvas() {
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        ctx.clearRect(0, 0, w, h);
+
+        // 繪製柔和橫線格
+        ctx.strokeStyle = '#ECE4DA';
+        ctx.lineWidth = 1.5;
+        for (let y = 56; y < h; y += 56) {
+          ctx.beginPath();
+          ctx.moveTo(16, y);
+          ctx.lineTo(w - 16, y);
+          ctx.stroke();
+        }
+
+        // 繪製筆畫
+        ctx.strokeStyle = '#1E1B18';
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        strokes.forEach(s => {
+          if (s.points.length === 0) return;
+          ctx.lineWidth = s.width;
+          ctx.beginPath();
+          const p0 = s.points[0];
+          ctx.moveTo(p0.nx * w, p0.ny * h);
+          if (s.points.length === 1) {
+            ctx.lineTo(p0.nx * w + 0.5, p0.ny * h + 0.5);
+          } else {
+            for (let i = 1; i < s.points.length; i++) {
+              ctx.lineTo(s.points[i].nx * w, s.points[i].ny * h);
+            }
+          }
+          ctx.stroke();
+        });
+      }
+
+      function getNormPos(clientX, clientY) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          nx: (clientX - rect.left) / rect.width,
+          ny: (clientY - rect.top) / rect.height
+        };
+      }
+
+      function startStroke(clientX, clientY) {
+        currentStroke = {
+          width: isThick ? 13 : 7,
+          points: [getNormPos(clientX, clientY)]
+        };
+        strokes.push(currentStroke);
+        redrawCanvas();
+      }
+
+      function moveStroke(clientX, clientY) {
+        if (!currentStroke) return;
+        currentStroke.points.push(getNormPos(clientX, clientY));
+        redrawCanvas();
+      }
+
+      function endStroke() {
+        currentStroke = null;
+      }
+
+      canvas.addEventListener('touchstart', e => {
+        e.preventDefault();
+        if (e.touches.length > 0) startStroke(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: false });
+
+      canvas.addEventListener('touchmove', e => {
+        e.preventDefault();
+        if (e.touches.length > 0) moveStroke(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: false });
+
+      canvas.addEventListener('touchend', e => {
+        e.preventDefault();
+        endStroke();
+      }, { passive: false });
+
+      canvas.addEventListener('mousedown', e => startStroke(e.clientX, e.clientY));
+      canvas.addEventListener('mousemove', e => moveStroke(e.clientX, e.clientY));
+      canvas.addEventListener('mouseup', endStroke);
+      canvas.addEventListener('mouseleave', endStroke);
+      window.addEventListener('resize', () => {
+        if (hwModal.classList.contains('visible')) resizeCanvas();
+      });
+
+      // 事件綁定
+      document.getElementById('btnToggleMute').onclick = () => {
+        const next = !isMuted();
+        setMuted(next);
+        showToast(next ? '已切換為靜音模式（僅顯示特大字卡）' : '已開啟提示音與語音朗讀');
+      };
+
+      document.getElementById('btnOpenHandwriting').onclick = () => {
+        hwModal.classList.add('visible');
+        setTimeout(resizeCanvas, 30);
+      };
+
+      document.getElementById('btnBackHome').onclick = () => {
+        hwModal.classList.remove('visible');
+      };
+
+      document.getElementById('btnToggleStroke').onclick = function () {
+        isThick = !isThick;
+        this.textContent = isThick ? '🖊️ 特粗筆' : '🖊️ 粗筆';
+      };
+
+      document.getElementById('btnUndoStroke').onclick = () => {
+        strokes.pop();
+        redrawCanvas();
+      };
+
+      document.getElementById('btnClearCanvas').onclick = () => {
+        strokes = [];
+        redrawCanvas();
+      };
+
+      document.getElementById('btnClearText').onclick = () => {
+        document.getElementById('etFreeInput').value = '';
+      };
+
+      document.getElementById('btnSpeakTypedText').onclick = () => {
+        const val = document.getElementById('etFreeInput').value.trim();
+        if (!val) {
+          showToast('請先輸入想說的文字喔！');
+          return;
+        }
+        openFullScreen({
+          id: 'free_typed',
+          text: val,
+          category: '✍️ 自由表達訊息',
+          isEmergency: false,
+          isCustom: false
+        });
+      };
+
+      document.getElementById('btnSpeakAgain').onclick = () => {
+        if (activeOverlayItem) speakOnly(activeOverlayItem.text);
+      };
+
+      document.getElementById('btnDeleteCustomOverlay').onclick = () => {
+        if (activeOverlayItem && activeOverlayItem.isCustom) {
+          deleteCustomPhrase(activeOverlayItem.id);
+          document.getElementById('fullScreenOverlay').classList.remove('visible');
+          activeOverlayItem = null;
+          renderPhrases();
+          showToast('已刪除該常用句');
+        }
+      };
+
+      document.getElementById('btnCloseOverlay').onclick = () => {
+        document.getElementById('fullScreenOverlay').classList.remove('visible');
+        activeOverlayItem = null;
+      };
+
+      function openAddDialog() {
+        const input = document.getElementById('customPhraseInput');
+        input.value = '';
+        document.getElementById('addDialogBackdrop').classList.add('visible');
+        setTimeout(() => input.focus(), 80);
+      }
+
+      document.getElementById('btnOpenAddDialog').onclick = openAddDialog;
+
+      document.getElementById('btnCancelAdd').onclick = () => {
+        document.getElementById('addDialogBackdrop').classList.remove('visible');
+      };
+
+      document.getElementById('btnSaveCustom').onclick = () => {
+        const val = document.getElementById('customPhraseInput').value.trim();
+        if (val) {
+          addCustomPhrase(val);
+          renderPhrases();
+          showToast('已加入「⭐ 我的常用句」');
+        }
+        document.getElementById('addDialogBackdrop').classList.remove('visible');
+      };
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+      }
+
+      updateMuteButton();
+      renderChips();
+      renderPhrases();
+    })();
+  </script>
+</body>
+</html>
