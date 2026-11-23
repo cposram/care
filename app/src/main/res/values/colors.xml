@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="warm_cream_bg">#FAF6F0</color>
+    <color name="warm_header_bg">#F3EAE0</color>
+    <color name="text_primary">#2B2623</color>
+    <color name="text_secondary">#6B615A</color>
+    <color name="accent_coral">#D94E4E</color>
+    <color name="accent_teal">#2B7A78</color>
+    <color name="accent_amber">#C86D2D</color>
+    <color name="accent_indigo">#4A6FA5</color>
+    <color name="accent_sage">#4F772D</color>
+    <color name="accent_plum">#7B4B94</color>
+    <color name="white">#FFFFFF</color>
+</resources>
